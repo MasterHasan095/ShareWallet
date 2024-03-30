@@ -152,4 +152,16 @@ router.post("/", async (req, res) => {
 //   }
 // });
 
+//Delete all expenses
+
+router.delete("/", async (req, res)=>{
+  try {
+    const result = await Expense.deleteMany({});
+    return res.status(200).json({ message: "All expenses deleted successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+})
+
 export default router;
