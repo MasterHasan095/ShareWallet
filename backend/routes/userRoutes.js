@@ -35,6 +35,24 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+//get all groups for a user
+
+router.get("/:id/groups", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({ userID: id }); // Search using groupID
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(user.groups);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+});
+
 //Create
 router.post("/", async (req, res) => {
   try {
@@ -56,6 +74,7 @@ router.post("/", async (req, res) => {
       username: req.body.username,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
+      groups: req.body.groups
     };
 
     const user = await User.create(newUser);
@@ -107,5 +126,14 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.delete("/", async (req, res)=>{
+  try {
+    const result = await User.deleteMany({});
+    return res.status(200).json({ message: "All users deleted successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+})
 
 export default router;

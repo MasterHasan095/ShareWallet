@@ -1,45 +1,56 @@
 import express from "express";
-import { Expense } from "../models/expense.js";
+import { Group } from "../models/groupModel.js";
 
 const router = express.Router();
 
-//Get all
-router.get("/", async (req, res) => {
+// Get all expenses of the group
+router.get("/:id", async (req, res) => {
   try {
-    const expenses = await Expense.find({});
+    const { id } = req.params;
+    const group = await Group.findOne({ groupID: id }); // Search using groupID
 
-    return res.status(200).json({
-      count: expenses.length,
-      data: expenses,
-    });
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    return res.status(200).json(group.expenses);
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
   }
 });
 
-// // Get User By ID
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const user = await User.findOne({ userID: id }); // Search using groupID
+//Get an individual expense
 
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+router.get("/:groupID/:expenseID", async (req, res) => {
+  try {
+    const { groupID, expenseID } = req.params;
+    const group = await Group.findOne({ groupID: groupID }); // Search using groupID
 
-//     return res.status(200).json(user);
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).send({ message: error.message });
-//   }
-// });
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    const expense = group.expenses.find(
+      (expense) => expense.expenseID == expenseID
+    );
+    if (!expense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+
+    return res.status(200).json(group.expense);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+});
 
 //Create
-router.post("/", async (req, res) => {
+router.post("/:id", async (req, res) => {
   try {
+    const { id } = req.params;
+    const group = await Group.findOne({ groupID: id }); // Search using groupID
     if (
-      !req.body.groupID ||
       !req.body.amount ||
       !req.body.expenseName ||
       !req.body.typeOfSplit ||
@@ -51,16 +62,18 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Find the highest groupID
-    const highestExpense = await Expense.findOne(
-      {},
-      {},
-      { sort: { expenseID: -1 } }
-    );
+    let highestExpenseID = 0;
+    group.expenses.forEach((expense) => {
+      if (expense.expenseID > highestExpenseID) {
+        highestExpenseID = expense.expenseID;
+      }
+    });
+
     let newExpenseID = 1; //
-    if (highestExpense) {
-      newExpenseID = highestExpense.expenseID + 1;
+    if (highestExpenseID) {
+      newExpenseID = highestExpenseID + 1;
     }
+
     var owee = [];
     const numberOfOwees = req.body.owee.length;
     const amount = req.body.amount;
@@ -76,25 +89,113 @@ router.post("/", async (req, res) => {
         console.log(owee);
         break;
       case "unequally":
+        let tempOweeAmount = 0;
+        let tempPayeeAmount = 0;
+        req.body.payee.map((indiPayee) => {
+          if (indiPayee.amount == null) {
+            return res.status(400).send({
+              message: "Amount cant be null ",
+            });
+          }
+          tempPayeeAmount += indiPayee.amount;
+        });
+        console.log(req.body.amount)
+        console.log(tempPayeeAmount)
+        if (req.body.amount != tempPayeeAmount) {
+          return res.status(400).send({
+            message: "total amount not crrect ",
+          });
+        }
         req.body.owee.map((indiOwee) => {
           if (indiOwee.amount == null) {
             return res.status(400).send({
               message: "Amount cant be null ",
             });
           }
+          tempOweeAmount += indiOwee.amount;
         });
-        owee = req.body.owee
+        if (tempPayeeAmount != tempOweeAmount) {
+          return res.status(400).send({
+            message: "Not enough owee amount ",
+          });
+        }
+        owee = req.body.owee;
         break;
       case "By percentage":
-        console.log("Percentage");
+        const totalPercentage = req.body.owee.reduce(
+          (total, owee) => total + owee.amount,
+          0
+        );
+
+        if (totalPercentage !== 100) {
+          return res
+            .status(400)
+            .json({ message: "Total percentage must be 100%" });
+        }
+
+        let totalAmount = req.body.amount;
+        let KeepThisTemp = 0;
+        req.body.payee.map((indiPayee) => {
+          if (indiPayee.amount == null) {
+            return res.status(400).send({
+              message: "Amount cant be null ",
+            });
+          }
+          KeepThisTemp += indiPayee.amount;
+        });
+        if (totalAmount != KeepThisTemp) {
+          return res.status(400).send({
+            message: "total amount not crrect ",
+          });
+        }
+        req.body.owee.forEach((oweer) => {
+          const percentageAmount = (oweer.amount / 100) * totalAmount;
+          owee.push({
+            userID: oweer.userID,
+            amount: percentageAmount,
+          });
+        });
         break;
       case "By Shares":
-        console.log("Shares");
+        const totalShares = req.body.owee.reduce(
+          (total, owee) => total + owee.amount,
+          0
+        );
+
+        if (totalShares === 0) {
+          return res
+            .status(400)
+            .json({ message: "Total shares cannot be zero" });
+        }
+
+        let tempTotalAmount = req.body.amount;
+        let KepThisTemp = 0;
+        req.body.payee.map((indiPayee) => {
+          if (indiPayee.amount == null) {
+            return res.status(400).send({
+              message: "Amount cant be null ",
+            });
+          }
+          KepThisTemp += indiPayee.amount;
+        });
+        if (tempTotalAmount != KepThisTemp) {
+          return res.status(400).send({
+            message: "total amount not crrect ",
+          });
+        }
+        req.body.owee.forEach((oweer) => {
+          const shareAmount = (oweer.amount / totalShares) * tempTotalAmount;
+          owee.push({
+            userID: oweer.userID,
+            amount: shareAmount,
+          });
+        });
+        console.log("here");
         break;
     }
+
     const newExpense = {
       expenseID: newExpenseID,
-      groupID: req.body.groupID,
       amount: req.body.amount,
       date: new Date(),
       expenseName: req.body.expenseName,
@@ -103,65 +204,74 @@ router.post("/", async (req, res) => {
       owee: owee,
     };
 
-    const expense = await Expense.create(newExpense);
+    group.expenses.push(newExpense);
+    await group.save();
 
-    return res.status(201).send(expense);
+    return res
+      .status(200)
+      .json({ message: "Expense added successfully", expense: newExpense });
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
   }
 });
 
-// // Update
-// router.put("/:id", async (req, res) => {
-//   try {
-//     if (!req.body.username || !req.body.email || !req.body.phoneNumber) {
-//       return res.status(400).send({
-//         message: "Send all required fields: username, email, phone number",
-//       });
-//     }
+// // // Update
+// // router.put("/:id", async (req, res) => {
+// //   try {
+// //     if (!req.body.username || !req.body.email || !req.body.phoneNumber) {
+// //       return res.status(400).send({
+// //         message: "Send all required fields: username, email, phone number",
+// //       });
+// //     }
 
-//     const { id } = req.params;
+// //     const { id } = req.params;
 
-//     // Assuming 'User' is your Mongoose model
-//     const result = await User.findOneAndUpdate({ userID: id }, req.body);
+// //     // Assuming 'User' is your Mongoose model
+// //     const result = await User.findOneAndUpdate({ userID: id }, req.body);
 
-//     if (!result) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     return res.status(200).send({ message: "User Updated successfully" });
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).send({ message: error.message });
-//   }
-// });
+// //     if (!result) {
+// //       return res.status(404).json({ message: "User not found" });
+// //     }
+// //     return res.status(200).send({ message: "User Updated successfully" });
+// //   } catch (error) {
+// //     console.log(error.message);
+// //     res.status(500).send({ message: error.message });
+// //   }
+// // });
 
-// //Delete
-// router.delete("/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const result = await User.findOneAndDelete({ userID: id });
-//     if (!result) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+// // //Delete
+// // router.delete("/:id", async (req, res) => {
+// //   try {
+// //     const { id } = req.params;
+// //     const result = await User.findOneAndDelete({ userID: id });
+// //     if (!result) {
+// //       return res.status(404).json({ message: "User not found" });
+// //     }
 
-//     return res.status(200).json({ message: "User deleted successfully" });
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).send({ message: error.message });
-//   }
-// });
+// //     return res.status(200).json({ message: "User deleted successfully" });
+// //   } catch (error) {
+// //     console.log(error.message);
+// //     res.status(500).send({ message: error.message });
+// //   }
+// // });
 
-//Delete all expenses
+// //Delete all expenses
 
-router.delete("/", async (req, res)=>{
+router.delete("/:id", async (req, res) => {
   try {
-    const result = await Expense.deleteMany({});
-    return res.status(200).json({ message: "All expenses deleted successfully" });
+    const { id } = req.params;
+    const group = await Group.findOne({ groupID: id }); // Search using groupID
+    group.expenses = [];
+
+    await group.save();
+    return res
+      .status(200)
+      .json({ message: "All expenses deleted successfully" });
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
   }
-})
+});
 
 export default router;

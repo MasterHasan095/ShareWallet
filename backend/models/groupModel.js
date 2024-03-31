@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { User } from "./user.js"; // Assuming this is where you define your User model
-import { Balance } from "./balance.js";
+
 
 const groupSchema = mongoose.Schema({
   groupID: {
@@ -11,12 +10,86 @@ const groupSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
-  balance: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Balance' }]
-//   balance: {
-//     type: [Balance],
-//     required: true,
-//   },
+  users: [
+    {
+      userID: {
+        type: Number,
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  balances: [
+    {
+      user1_ID: {
+        type: Number,
+        required: true,
+      },
+      user2_ID: {
+        type: Number,
+        required: true,
+      },
+      balance: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  expenses: [{
+    expenseID: {
+      type: Number,
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    expenseName: {
+      type: String,
+      required: true,
+    },
+    typeOfSplit: {
+      type: String,
+      required: true,
+    },
+    payee: {
+      type: [
+        {
+          userID: {
+            type: Number,
+            required: true,
+          },
+          amount: {
+            type: Number,
+            required: true,
+          },
+        },
+      ],
+      required: true,
+    },
+    owee: {
+      type: [
+        {
+          userID: {
+            type: Number,
+            required: true,
+          },
+          amount: {
+            type: Number,
+            required: false,
+          },
+        },
+      ],
+      required: true,
+    },
+  }]
 });
 
 export const Group = mongoose.model("Group", groupSchema);

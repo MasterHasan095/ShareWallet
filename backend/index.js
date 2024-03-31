@@ -21,13 +21,15 @@ app.get("/", (req, res) => {
   return res.status(234).send("Share Wallet");
 });
 
+
 //Diff major routes
 
 app.use('/groups', groupsRoute);
 app.use('/users', usersRoute);
 app.use('/groupmembers', groupMemberRoutes);
-app.use('/expense', expenseRoutes);
 app.use('/types', typesRoutes);
+app.use('/groups/expense', expenseRoutes)
+
 
 
 mongoose
