@@ -205,11 +205,28 @@ router.post("/:id", async (req, res) => {
     };
 
     group.expenses.push(newExpense);
+
+    req.body.payee.forEach((payee)=>{
+      group.balances.forEach((balance=>{
+        if (balance.payee == payee.userID){
+          owee.forEach((owee)=>{
+            if (balance.owee == owee.userID){
+              console.log(payee.userID);
+              console.log(owee.userID);
+              console.log(payee.amount)
+              console.log(owee.amount)
+            }
+          })
+        }
+      }))
+    })
     await group.save();
 
     return res
+
       .status(200)
       .json({ message: "Expense added successfully", expense: newExpense });
+
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ message: error.message });

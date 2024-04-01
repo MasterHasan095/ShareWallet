@@ -91,7 +91,6 @@ router.post("/", async (req, res) => {
 });
 
 //Add user to a group
-//Add user to a group
 router.post("/addUser/:groupID/:userID", async (req, res) => {
   try {
     const { userID, groupID } = req.params;
@@ -123,13 +122,13 @@ router.post("/addUser/:groupID/:userID", async (req, res) => {
     for (const user of group.users) {
       if (user.userID !== fetchedUser.userID) {
         group.balances.push({
-          user1_ID: user.userID,
-          user2_ID: fetchedUser.userID,
+          payee: user.userID,
+          owee: fetchedUser.userID,
           balance: 0 // Default balance for now
         });
         group.balances.push({
-          user1_ID: fetchedUser.userID,
-          user2_ID: user.userID,
+          payee: fetchedUser.userID,
+          owee: user.userID,
           balance: 0 // Default balance for now
         });
       }
@@ -204,7 +203,6 @@ router.delete("/", async (req, res)=>{
     res.status(500).send({ message: error.message });
   }
 })
-
 
 // Remove user from a group
 router.delete("/removeUser/:groupID/:userID", async (req, res) => {

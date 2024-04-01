@@ -24,11 +24,11 @@ const groupSchema = mongoose.Schema({
   ],
   balances: [
     {
-      user1_ID: {
+      payee: {
         type: Number,
         required: true,
       },
-      user2_ID: {
+      owee: {
         type: Number,
         required: true,
       },
