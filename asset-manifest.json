@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/ShareWallet/static/css/main.775ff85d.css",
-    "main.js": "/ShareWallet/static/js/main.313dbdf5.js",
+    "main.js": "/ShareWallet/static/js/main.26ff89a1.js",
     "index.html": "/ShareWallet/index.html",
     "main.775ff85d.css.map": "/ShareWallet/static/css/main.775ff85d.css.map",
-    "main.313dbdf5.js.map": "/ShareWallet/static/js/main.313dbdf5.js.map"
+    "main.26ff89a1.js.map": "/ShareWallet/static/js/main.26ff89a1.js.map"
   },
   "entrypoints": [
     "static/css/main.775ff85d.css",
-    "static/js/main.313dbdf5.js"
+    "static/js/main.26ff89a1.js"
   ]
 }
