@@ -303,69 +303,69 @@ router.post("/:id", async (req, res) => {
 // //   }
 // // });
 
-router.delete("/:groupID/:expenseID", async (req, res) => {
-  try {
-    const { groupID, expenseID } = req.params;
-    const group = await Group.findOne({ groupID: groupID });
+// router.delete("/:groupID/:expenseID", async (req, res) => {
+//   try {
+//     const { groupID, expenseID } = req.params;
+//     const group = await Group.findOne({ groupID: groupID });
 
-    if (!group) {
-      return res.status(404).json({ message: "Group not found" });
-    }
+//     if (!group) {
+//       return res.status(404).json({ message: "Group not found" });
+//     }
 
-    const initialExpenseCount = group.expenses.length;
+//     const initialExpenseCount = group.expenses.length;
 
-    // Find the expense with the provided expenseID
-    // const deletedExpenseIndex = group.expenses.findIndex(expense => expense.expenseID === expenseID);
+//     // Find the expense with the provided expenseID
+//     // const deletedExpenseIndex = group.expenses.findIndex(expense => expense.expenseID === expenseID);
 
-    let deletedExpenseIndex = null;
-    group.expenses.forEach((expense)=>{
-      if (expense.expenseID == expenseID){
-        deletedExpenseIndex = expense
-      }
+//     let deletedExpenseIndex = null;
+//     group.expenses.forEach((expense)=>{
+//       if (expense.expenseID == expenseID){
+//         deletedExpenseIndex = expense
+//       }
       
-    })
-    if (deletedExpenseIndex === -1) {
-      return res.status(404).json({ message: "Expense not found" });
-    }
+//     })
+//     if (deletedExpenseIndex === -1) {
+//       return res.status(404).json({ message: "Expense not found" });
+//     }
 
-    // Extract the expense to delete and its details
-    const deletedExpense = group.expenses[deletedExpenseIndex];
-    const { payee, owee, amount } = deletedExpense;
+//     // Extract the expense to delete and its details
+//     const deletedExpense = group.expenses[deletedExpenseIndex];
+//     console.log(deletedExpense)
 
-    // Remove the expense from the expenses array
-    group.expenses.splice(deletedExpenseIndex, 1);
+//     // Remove the expense from the expenses array
+//     // group.expenses.splice(deletedExpenseIndex, 1);
 
-    // Update balances
-    if (payee.length === 1) {
-      const payeeID = payee[0].userID;
-      owee.forEach(owe => {
-        const oweeID = owe.userID;
-        const balanceToUpdate = group.balances.find(balance => balance.payee === payeeID && balance.owee === oweeID);
-        if (balanceToUpdate) {
-          balanceToUpdate.balance -= owe.amount;
-        }
-      });
-    } else {
-      payee.forEach(pay => {
-        owee.forEach(owe => {
-          const payeeID = pay.userID;
-          const oweeID = owe.userID;
-          const balanceToUpdate = group.balances.find(balance => balance.payee === payeeID && balance.owee === oweeID);
-          if (balanceToUpdate) {
-            balanceToUpdate.balance -= owe.amount;
-          }
-        });
-      });
-    }
+//     // // Update balances
+//     // if (payee.length === 1) {
+//     //   const payeeID = payee[0].userID;
+//     //   owee.forEach(owe => {
+//     //     const oweeID = owe.userID;
+//     //     const balanceToUpdate = group.balances.find(balance => balance.payee === payeeID && balance.owee === oweeID);
+//     //     if (balanceToUpdate) {
+//     //       balanceToUpdate.balance -= owe.amount;
+//     //     }
+//     //   });
+//     // } else {
+//     //   payee.forEach(pay => {
+//     //     owee.forEach(owe => {
+//     //       const payeeID = pay.userID;
+//     //       const oweeID = owe.userID;
+//     //       const balanceToUpdate = group.balances.find(balance => balance.payee === payeeID && balance.owee === oweeID);
+//     //       if (balanceToUpdate) {
+//     //         balanceToUpdate.balance -= owe.amount;
+//     //       }
+//     //     });
+//     //   });
+//     // }
 
-    await group.save();
+//     await group.save();
 
-    return res.status(200).json({ message: "Expense deleted successfully" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
-  }
-});
+//     return res.status(200).json({ message: "Expense deleted successfully" });
+//   } catch (error) {
+//     console.log(error.message);
+//     res.status(500).send({ message: error.message });
+//   }
+// });
 
 
 
