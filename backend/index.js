@@ -14,9 +14,11 @@ const app = express();
 app.use(express.json());
 
 //CORS
-app.use(cors({
-  origin: 'http://localhost:3000', // Allow requests from localhost:3000
-}));
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://masterhasan095.github.io/'], // Allow requests from localhost:3000 and example.com
+};
+
+app.use(cors(corsOptions));
 
 //Routes 
 app.get("/", (req, res) => {

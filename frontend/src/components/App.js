@@ -12,10 +12,10 @@ const App = () => {
     <div>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/group/create" element={<CreateGroup />} />
-        <Route path="/group/:id" element={<GroupPage />} />
+        <Route path="/ShareWallet/" element={<Home />} />
+        <Route path="/ShareWallet/profile" element={<Profile />} />
+        <Route path="/ShareWallet/group/create" element={<CreateGroup />} />
+        <Route path="/ShareWallet/group/:id" element={<GroupPage />} />
 
         {/* <Route path='/books/create' element={<CreateBook />} />
       <Route path='/books/details/:id' element={<ShowBook />} />

@@ -1,0 +1,37 @@
+.form {
+  width: 70vw;
+  height: 70vh;
+  margin-left: 15vw;
+  margin-top: 5vh;
+  background: linear-gradient(140deg, #924eba 0%, #a457d1 50%, #be64f1 75%);
+  font-size: xx-large;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+input:focus {
+  outline: none;
+  border-color: #007bff; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+}
+
+.form button {
+    display: block;
+    margin-top: 20px;
+    margin-left: 33vw;
+    padding: 10px;
+    font-size: 16px;
+    background: linear-gradient(140deg, #4CAF50 0%, #2E8B57 50%, #3CB371 75%);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .form button:hover {
+    background: linear-gradient(140deg, #32CD32 0%, #228B22 50%, #3CB371 75%);
+  }

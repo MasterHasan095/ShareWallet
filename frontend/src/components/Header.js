@@ -9,8 +9,8 @@ const Header = () =>{
         <header>
             <h1>ShareWallet</h1>
             <nav >
-                <Link to="/" className="white-text">Home</Link>
-                <Link to="/profile" style={{textDecoration: "none"}}><Initials /></Link>
+                <Link to="/ShareWallet/" className="white-text">Home</Link>
+                <Link to="/ShareWallet/profile" style={{textDecoration: "none"}}><Initials /></Link>
             </nav>
             
         </header>

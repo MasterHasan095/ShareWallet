@@ -52,8 +52,8 @@ const AllGroups = () => {
             ))}
         </Grid>
       )}
-      <div  className="center" >
-        <Link to="/group/create" className="white-text center">
+      <div className="center" >
+        <Link to="/ShareWallet/group/create" className="white-text center" style={{textDecoration: "none"}}>
           <Paper elevation={3} className="create-button center" style={{marginLeft: "35vw"}} >
             Create a Group
           </Paper>
