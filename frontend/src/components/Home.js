@@ -4,9 +4,9 @@ import AllGroups from "./Groups/AllGroups.js";
 const Home = () => {
   return (
     <>
-      <Header />
-      <AllGroups />
-      <Footer />
+ 
+      <AllGroups/>
+      
     </>
   );
 };

@@ -1,20 +1,30 @@
-import react, {useEffect} from "react";
-import {Routes, Route} from 'react-router-dom';
+import react, { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Home.js";
 import Profile from "./Profile.js";
+import CreateGroup from "./Groups/CreateGroup.js";
+import GroupPage from "./Groups/GroupPage.js";
+import Header from "./Header.js";
+import Footer from "./Footer.js";
 
 const App = () => {
-
   return (
-    <Routes>
-      <Route path='/' element={<Home />} />
-      <Route path='/profile' element={<Profile />} />
-      {/* <Route path='/books/create' element={<CreateBook />} />
+    <div>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/group/create" element={<CreateGroup />} />
+        <Route path="/group/:id" element={<GroupPage />} />
+
+        {/* <Route path='/books/create' element={<CreateBook />} />
       <Route path='/books/details/:id' element={<ShowBook />} />
       <Route path='/books/edit/:id' element={<EditBook />} />
       <Route path='/books/delete/:id' element={<DeleteBook />} /> */}
-    </Routes>
+      </Routes>
+      <Footer />
+    </div>
   );
-}
+};
 
 export default App;

@@ -1,3 +1,17 @@
 .group-paper{
+    height: 30vh;
+    background: linear-gradient(140deg, #924eba 0%, #a457d1 50%, #be64f1 75%);
+}
+.group-paper:hover{
+    background: linear-gradient(140deg, #ce7bff 0%, #c88cec 50%, #d087fa 75%);
+}
+.group-container{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 100px;
+}
 
+.create-button{
+    width: 30vw;
+    height: 5vh;
 }
