@@ -14,9 +14,11 @@ const app = express();
 app.use(express.json());
 
 //CORS
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow requests from localhost:3000
+}));
 
-//Routes
+//Routes 
 app.get("/", (req, res) => {
   return res.status(234).send("Share Wallet");
 });

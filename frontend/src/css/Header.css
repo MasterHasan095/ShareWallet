@@ -1,0 +1,28 @@
+header {
+    color: white;
+    font-family: "McLaren", cursive;
+    background: linear-gradient(140deg, #6D398B 0%, #512A68 50%, #6D398B 75%);
+    width: 100vw;
+    height: 10vh;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+}
+
+.white-text{
+    color: white;
+    padding: 5px;
+    font-size: 20px;
+}
+
+.white-text:hover{
+    color: black;
+}
+
+nav{
+    justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
+}
