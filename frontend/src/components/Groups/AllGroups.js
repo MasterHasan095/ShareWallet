@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Loading from "../Loading";
 import Group from "./Group";
 import { Link } from "react-router-dom";
+import axios from "axios"; // Import Axios
 import "../../css/Group.css";
 
 const AllGroups = () => {
@@ -16,10 +17,9 @@ const AllGroups = () => {
       try {
         setIsLoading(true);
         console.log("In here");
-        const response = await fetch("http://localhost:5555/groups");
-        const jsonData = await response.json();
-        console.log(jsonData);
-        setGroups(jsonData.data);
+        const response = await axios.get("http://localhost:5555/groups"); // Use axios.get
+        console.log(response.data);
+        setGroups(response.data.data);
         setIsLoading(false);
       } catch (error) {
         console.log(error.message);
@@ -28,6 +28,7 @@ const AllGroups = () => {
 
     fetchData();
   }, []);
+
   return (
     <div className="center">
       <h1>All Groups</h1>
@@ -52,9 +53,9 @@ const AllGroups = () => {
             ))}
         </Grid>
       )}
-      <div className="center" >
-        <Link to="/ShareWallet/group/create" className="white-text center" style={{textDecoration: "none"}}>
-          <Paper elevation={3} className="create-button center" style={{marginLeft: "35vw"}} >
+      <div className="center">
+        <Link to="/ShareWallet/group/create" className="white-text center" style={{ textDecoration: "none" }}>
+          <Paper elevation={3} className="create-button center" style={{ marginLeft: "35vw" }}>
             Create a Group
           </Paper>
         </Link>

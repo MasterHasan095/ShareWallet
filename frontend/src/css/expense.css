@@ -1,0 +1,27 @@
+.expense-paper{
+    display: flex;
+    min-height: 10vh;
+    max-width: 70vw;
+    margin: 10px;
+    color: white;
+    font-size: xx-large;
+}
+
+.expense-left{
+    width: 25%;
+    background: linear-gradient(140deg, #924eba 0%, #a457d1 50%, #be64f1 75%);
+    height: 10vh;
+
+}
+.expense-mid{
+    width: 50%;
+    background: linear-gradient(140deg, #ce7bff 0%, #c88cec 50%, #d087fa 75%);
+    height: 10vh;
+    color: black;
+    font-size: medium;
+}
+.expense-right{
+    width: 25%;
+    background: linear-gradient(140deg, #924eba 0%, #a457d1 50%, #be64f1 75%);
+    height: 10vh;
+}

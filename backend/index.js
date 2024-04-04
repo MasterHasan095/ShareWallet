@@ -15,7 +15,7 @@ app.use(express.json());
 
 //CORS
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://masterhasan095.github.io/'], // Allow requests from localhost:3000 and example.com
+  origin: ['http://localhost:3000', 'https://masterhasan095.github.io/ShareWallet/'], // Allow requests from localhost:3000 and example.com
 };
 
 app.use(cors(corsOptions));

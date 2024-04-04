@@ -16,3 +16,18 @@
     height: 5vh;
 }
 
+.group-page{
+    /* border: 2px solid red; */
+}
+.group-head{
+    text-shadow: 1px 1px purple;
+}
+.group-head-div{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+.all-expenses{
+    margin-left: 15vw;
+}

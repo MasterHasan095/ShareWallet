@@ -8,7 +8,7 @@ const Group = (props) => {
 
   return (
     <>
-      <Link to={`/group/${group.groupID}`}>
+      <Link to={`/ShareWallet/group/${group.groupID}`} style={{textDecoration: "none"}}>
         <Paper elevation={3} className="group-paper center">
           <h1>{group.groupName}</h1>
         </Paper>

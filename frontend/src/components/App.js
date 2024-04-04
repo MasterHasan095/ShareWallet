@@ -6,6 +6,8 @@ import CreateGroup from "./Groups/CreateGroup.js";
 import GroupPage from "./Groups/GroupPage.js";
 import Header from "./Header.js";
 import Footer from "./Footer.js";
+import ExpensePage from "./Expense/ExpensePage.js";
+import CreateExpense from "./Expense/CreateExpense.js";
 
 const App = () => {
   return (
@@ -16,7 +18,8 @@ const App = () => {
         <Route path="/ShareWallet/profile" element={<Profile />} />
         <Route path="/ShareWallet/group/create" element={<CreateGroup />} />
         <Route path="/ShareWallet/group/:id" element={<GroupPage />} />
-
+        <Route path='/ShareWallet/expense/:id' element={<ExpensePage />} />
+        <Route path='/ShareWallet/expense/create/:id' element={<CreateExpense />} />
         {/* <Route path='/books/create' element={<CreateBook />} />
       <Route path='/books/details/:id' element={<ShowBook />} />
       <Route path='/books/edit/:id' element={<EditBook />} />
