@@ -27,7 +27,10 @@ const CreateExpense = () => {
     console.log("Clicked")
     setOpenDialog(true);
   }
-  const handleCloseDialog = () =>{
+  const handleCloseDialog = (payees) =>{
+    console.log(payees);
+    console.log(users)
+    formData.payee = payees
     setOpenDialog(false);
   }
 

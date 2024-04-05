@@ -15,19 +15,22 @@ const Payee = (props) => {
   const selectUser = (user) => {
     setSelectedUsers((prevSelectedUsers) => {
       if (prevSelectedUsers.includes(user)) {
-        return prevSelectedUsers.filter((user) => user !== user);
+        const newSet =  prevSelectedUsers.filter((user2) => {
+            return user2 != user;
+        })
+        console.log(newSet);
+        return newSet;
+
       } else {
         return [...prevSelectedUsers, user];
       }
     });
   };
 
-  const handleClose = () =>{
-    console.log("handling Closing");
-    console.log(selectedUsers)
-    props.onClose();
-  }
-  console.log(users);
+  const handleClose = () => {
+    props.onClose(selectedUsers);
+  };
+
   return (
     <Dialog
       open={props.open}
@@ -44,7 +47,7 @@ const Payee = (props) => {
         },
       }}
     >
-      <DialogTitle>This is a title</DialogTitle>
+      <DialogTitle className="dialog-title">This is a title</DialogTitle>
       <DialogContent className="dialog-content">
         {users.map((user) => {
           const isSelected = selectedUsers.includes(user);
