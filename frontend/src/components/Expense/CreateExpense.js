@@ -4,12 +4,16 @@ import "../../css/form.css";
 import { Paper } from "@mui/material";
 import Loading from "../Loading";
 import axios from "axios";
+import Payee from "./Payee"
 // Import useHistory hook from React Router
 
 const CreateExpense = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
+
+  const [openDialog, setOpenDialog] = useState(false);
+
   const [formData, setFormData] = useState({
     expenseName: "",
     amount: 0,
@@ -18,6 +22,14 @@ const CreateExpense = () => {
     owee: [],
   });
   const { id } = useParams();
+
+  const handleOpenDialog = () =>{
+    console.log("Clicked")
+    setOpenDialog(true);
+  }
+  const handleCloseDialog = () =>{
+    setOpenDialog(false);
+  }
 
   useEffect(() => {
     try {
@@ -39,17 +51,16 @@ const CreateExpense = () => {
   console.log(id);
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-  
+
     if (type === "checkbox") {
-        
       // If the event is from a checkbox input, handle the change in payee array
       if (checked) {
-        console.log("Atleast here")
+        console.log("Atleast here");
         setFormData((prevFormData) => ({
           ...prevFormData,
           [name]: [...prevFormData[name], value],
         }));
-        console.log(formData)
+        console.log(formData);
       } else {
         // If the checkbox is unchecked, remove the user from the payee array
         setFormData((prevFormData) => ({
@@ -65,7 +76,7 @@ const CreateExpense = () => {
       });
     }
   };
-  
+
   return (
     <>
       {isLoading ? (
@@ -115,18 +126,19 @@ const CreateExpense = () => {
                 <option value="By Shares">By Shares</option>
               </select>
             </label>
-            {users.map((user) => (
-              <label key={user.userID}>
-                <input
-                  type="checkbox"
-                  value={user.userID}
-                  checked={formData.payee.includes(user.userID)}
-                  onChange={handleChange}
-                  name="payee"
-                />
-                {user.username}
-              </label>
-            ))}
+
+            <div className="expense-payees-select">
+              Paid By :{" "}
+              {formData.payee.length === 0 ? (
+                <Paper onClick={handleOpenDialog}>Select User</Paper>
+              ) : (
+                formData.payee.map((payee) => (
+                  <div key={payee.userID}>{payee.username}</div>
+                ))
+              )}
+              <Payee open={openDialog} onClose={handleCloseDialog} users={users}/>
+              
+            </div>
 
             <br />
             <button type="submit" className="center">
