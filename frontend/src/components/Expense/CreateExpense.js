@@ -4,7 +4,9 @@ import "../../css/form.css";
 import { Paper } from "@mui/material";
 import Loading from "../Loading";
 import axios from "axios";
-import Payee from "./Payee"
+import Payee from "./Payee";
+import Owee from "./Owee";
+import IndiEclipseLook from "./IndiEclipseLook.js";
 // Import useHistory hook from React Router
 
 const CreateExpense = () => {
@@ -12,7 +14,8 @@ const CreateExpense = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
 
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialogPayee, setOpenDialogPayee] = useState(false);
+  const [openDialogOwee, setOpenDialogOwee] = useState(false);
 
   const [formData, setFormData] = useState({
     expenseName: "",
@@ -21,18 +24,39 @@ const CreateExpense = () => {
     payee: [],
     owee: [],
   });
+  const [amount, setAmount] = useState(formData.amount);
+  const [type, setType] = useState(formData.typeOfSplit);
+
+  useEffect(() => {
+    setAmount(formData.amount);
+  }, [formData.amount]);
+
+  useEffect(() => {
+    // Reset the owee array when typeOfSplit changes
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      owee: [], // Empty the owee array
+    }));
+    setType(formData.typeOfSplit);
+  }, [formData.typeOfSplit]);
+
   const { id } = useParams();
 
-  const handleOpenDialog = () =>{
-    console.log("Clicked")
-    setOpenDialog(true);
-  }
-  const handleCloseDialog = (payees) =>{
-    console.log(payees);
-    console.log(users)
-    formData.payee = payees
-    setOpenDialog(false);
-  }
+  const handleOpenDialogPayee = () => {
+    setOpenDialogPayee(true);
+  };
+  const handleCloseDialogPayee = (payees) => {
+    formData.payee = payees;
+    setOpenDialogPayee(false);
+  };
+
+  const handleOpenDialogOwee = () => {
+    setOpenDialogOwee(true);
+  };
+  const handleCloseDialogOwee = (owees) => {
+    formData.owee = owees;
+    setOpenDialogOwee(false);
+  };
 
   useEffect(() => {
     try {
@@ -42,7 +66,6 @@ const CreateExpense = () => {
           `http://localhost:5555/groups/${id}/users`
         );
         setUsers(response.data.users);
-        console.log(response.data);
         setIsLoading(false);
       };
 
@@ -51,19 +74,16 @@ const CreateExpense = () => {
       console.log(error.message);
     }
   }, []);
-  console.log(id);
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     if (type === "checkbox") {
       // If the event is from a checkbox input, handle the change in payee array
       if (checked) {
-        console.log("Atleast here");
         setFormData((prevFormData) => ({
           ...prevFormData,
           [name]: [...prevFormData[name], value],
         }));
-        console.log(formData);
       } else {
         // If the checkbox is unchecked, remove the user from the payee array
         setFormData((prevFormData) => ({
@@ -79,6 +99,13 @@ const CreateExpense = () => {
       });
     }
   };
+
+  const submitForm = (event) => {
+    event.preventDefault(); // Prevent default form submission behavior
+    console.log("Clicked Submit");
+    // Add your form submission logic here
+  }
+  
 
   return (
     <>
@@ -133,18 +160,46 @@ const CreateExpense = () => {
             <div className="expense-payees-select">
               Paid By :{" "}
               {formData.payee.length === 0 ? (
-                <Paper onClick={handleOpenDialog}>Select User</Paper>
+                <Paper onClick={handleOpenDialogPayee}>Select User</Paper>
               ) : (
-                formData.payee.map((payee) => (
-                  <div key={payee.userID}>{payee.username}</div>
-                ))
+                <>
+                  {formData.payee.map((payee) => (
+                    <>
+                      {/* <div key={payee.userID}>{payee.username}</div> */}
+
+                      <IndiEclipseLook user={payee} />
+                    </>
+                  ))}
+
+                  <Paper onClick={handleOpenDialogPayee}>Change Payees</Paper>
+                </>
               )}
-              <Payee open={openDialog} onClose={handleCloseDialog} users={users}/>
-              
+              <Payee
+                open={openDialogPayee}
+                onClose={handleCloseDialogPayee}
+                users={users}
+                totalAmount={amount}
+                type={type}
+              />
+            </div>
+
+            <div className="expense-owee-select">
+              Split Between :{" "}
+              {formData.owee.map((owee) => (
+                <IndiEclipseLook user={owee} />
+              ))}
+              <Paper onClick={handleOpenDialogOwee}>Change owees</Paper>
+              <Owee
+                open={openDialogOwee}
+                onClose={handleCloseDialogOwee}
+                users={users}
+                totalAmount={amount}
+                type={type}
+              />
             </div>
 
             <br />
-            <button type="submit" className="center">
+            <button className="center" onClick={(event) => submitForm(event)}>
               Submit
             </button>
           </form>

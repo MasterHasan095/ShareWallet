@@ -29,6 +29,10 @@
     background: linear-gradient(140deg, #924eba 0%, #a457d1 50%, #be64f1 75%);
 }
 .dialog-content{
+    justify-content: space-evenly;
+}
+
+.dialog-content-inner{
     display: flex;
     justify-content: space-evenly;
 }
@@ -40,4 +44,20 @@
 }
 .selected{
     border: 2px solid brown;
+}
+.oval {
+    width: 75px; /* Adjust width as needed */
+    height: 50px; /* Adjust height as needed */
+    background-color: #3498db; /* Adjust background color as needed */
+    border-radius: 50%; /* This creates the oval shape */
+    display: flex;
+    font-size: medium;
+}
+  
+
+.red{
+    color: red;
+}
+.green{
+    color: green;
 }

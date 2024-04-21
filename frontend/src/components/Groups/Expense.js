@@ -63,7 +63,7 @@ const Expense = (props) => {
               {payee ? (
                 <div>{payee.username}</div>
               ) : (
-                <div>Nigga there are multiple payees</div>
+                <div> there are multiple payees</div>
               )}
             </div>
             <div className="expense-right expense-div center">

@@ -9,12 +9,13 @@ import {
 } from "@mui/material";
 import "../../css/expense.css";
 
-const Payee = (props) => {
+const Owee = (props) => {
   const [users, setUsers] = useState(props.users);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [totalAmount, setTotalAmount] = useState(props.totalAmount);
   const [indiAddAmount, setIndiAddAmount] = useState(0);
   const [typeOfSplit, setTypeOfSplit] = useState(null);
+  const [label, setLabel] = useState(null);
 
   useEffect(() => {
     setTotalAmount(props.totalAmount);
@@ -37,14 +38,11 @@ const Payee = (props) => {
     });
   };
 
-  // Update the amount for a specific user
   const handleAmountChange = (userId, value) => {
     setAmounts((prevAmounts) => ({
       ...prevAmounts,
       [userId]: value,
     }));
-
-    // Calculate indiAddAmount after updating amounts
     let total = 0;
     Object.values({ ...amounts, [userId]: value }).forEach((amount) => {
       total += parseFloat(amount) || 0;
@@ -73,11 +71,21 @@ const Payee = (props) => {
 
   const handleClose = () => {
     // Return an array of objects containing user and amount
-    if (totalAmount - indiAddAmount == 0) {
+    if (typeOfSplit != "equally") {
+      if (totalAmount - indiAddAmount == 0) {
+        const selectedUsersWithAmounts = selectedUsers.map((user) => ({
+          userID: user.userID,
+          username: user.username,
+          amount: amounts[user.userID] || 0, // Default to 0 if amount not provided
+        }));
+        props.onClose(selectedUsersWithAmounts);
+      }
+    }else{
+      const length = selectedUsers.length;
       const selectedUsersWithAmounts = selectedUsers.map((user) => ({
         userID: user.userID,
         username: user.username,
-        amount: amounts[user.userID] || 0, // Default to 0 if amount not provided
+        amount: totalAmount/length || 0, // Default to 0 if amount not provided
       }));
       props.onClose(selectedUsersWithAmounts);
     }
@@ -114,7 +122,7 @@ const Payee = (props) => {
                 key={user.id}
               >
                 {user.username}
-                
+                {typeOfSplit !== "equally" && (
                   <TextField
                     type="number"
                     value={amounts[user.userID] || ""}
@@ -125,17 +133,19 @@ const Payee = (props) => {
                     onClick={handleTextFieldClick}
                     disabled={!isSelected}
                   />
-                
+                )}
               </Paper>
             );
           })}
         </div>
-        <div>
-          Amount Left :{" "}
-          <p className={totalAmount - indiAddAmount == 0 ? "green" : "red"}>
-            {totalAmount - indiAddAmount}
-          </p>
-        </div>
+        {typeOfSplit !== "equally" && (
+          <div>
+            Amount Left :{" "}
+            <p className={totalAmount - indiAddAmount == 0 ? "green" : "red"}>
+              {totalAmount - indiAddAmount}
+            </p>
+          </div>
+        )}
       </DialogContent>
       <DialogActions>
         <button onClick={handleEmptyClose}>Cancel</button>
@@ -145,4 +155,4 @@ const Payee = (props) => {
   );
 };
 
-export default Payee;
+export default Owee;
