@@ -103,9 +103,20 @@ const CreateExpense = () => {
   const submitForm = (event) => {
     event.preventDefault(); // Prevent default form submission behavior
     console.log("Clicked Submit");
+    console.log(formData);
+
+    axios
+      .post(`http://localhost:5555/groups/expense/${id}`, formData)
+      .then((response) => {
+        console.log("Response:", response.data);
+        navigate(`/ShareWallet/group/${id}`)
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
     // Add your form submission logic here
-  }
-  
+  };
 
   return (
     <>
