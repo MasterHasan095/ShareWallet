@@ -39,12 +39,15 @@ const Owee = (props) => {
   };
 
   const handleAmountChange = (userId, value) => {
+    // Parse the value to a number before setting it in the state
+    const amount = parseFloat(value) || 0; // Parse the value to a float, default to 0 if not a valid number
     setAmounts((prevAmounts) => ({
       ...prevAmounts,
-      [userId]: value,
+      [userId]: amount,
     }));
+
     let total = 0;
-    Object.values({ ...amounts, [userId]: value }).forEach((amount) => {
+    Object.values({ ...amounts, [userId]: amount }).forEach((amount) => {
       total += parseFloat(amount) || 0;
     });
     setIndiAddAmount(total);
@@ -71,7 +74,7 @@ const Owee = (props) => {
 
   const handleClose = () => {
     // Return an array of objects containing user and amount
-    if (typeOfSplit != "equally") {
+    if (typeOfSplit == "unequally") {
       if (totalAmount - indiAddAmount == 0) {
         const selectedUsersWithAmounts = selectedUsers.map((user) => ({
           userID: user.userID,
@@ -80,12 +83,26 @@ const Owee = (props) => {
         }));
         props.onClose(selectedUsersWithAmounts);
       }
-    }else{
+    } else if (typeOfSplit == "By percentage") {
+      const selectedUsersWithAmounts = selectedUsers.map((user) => ({
+        userID: user.userID,
+        username: user.username,
+        amount: amounts[user.userID] || 0, // Default to 0 if amount not provided
+      }));
+      props.onClose(selectedUsersWithAmounts);
+    } else if (typeOfSplit == "By Shares") {
+      const selectedUsersWithAmounts = selectedUsers.map((user) => ({
+        userID: user.userID,
+        username: user.username,
+        amount: amounts[user.userID] || 0, // Default to 0 if amount not provided
+      }));
+      props.onClose(selectedUsersWithAmounts);
+    } else {
       const length = selectedUsers.length;
       const selectedUsersWithAmounts = selectedUsers.map((user) => ({
         userID: user.userID,
         username: user.username,
-        amount: totalAmount/length || 0, // Default to 0 if amount not provided
+        amount: totalAmount / length || 0, // Default to 0 if amount not provided
       }));
       props.onClose(selectedUsersWithAmounts);
     }
@@ -138,11 +155,19 @@ const Owee = (props) => {
             );
           })}
         </div>
-        {typeOfSplit !== "equally" && (
+        {typeOfSplit === "unequally" && (
           <div>
             Amount Left :{" "}
             <p className={totalAmount - indiAddAmount == 0 ? "green" : "red"}>
               {totalAmount - indiAddAmount}
+            </p>
+          </div>
+        )}
+        {typeOfSplit === "By percentage" && (
+          <div>
+            Percentage Left :{" "}
+            <p className={100 - indiAddAmount == 0 ? "green" : "red"}>
+              {100 - indiAddAmount}
             </p>
           </div>
         )}

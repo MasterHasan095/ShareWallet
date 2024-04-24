@@ -77,25 +77,30 @@ const CreateExpense = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
+    // Convert the value to a number if the input name is "amount"
+    const updatedValue = name === "amount" ? Number(value) : value;
+
     if (type === "checkbox") {
       // If the event is from a checkbox input, handle the change in payee array
       if (checked) {
         setFormData((prevFormData) => ({
           ...prevFormData,
-          [name]: [...prevFormData[name], value],
+          [name]: [...prevFormData[name], updatedValue],
         }));
       } else {
         // If the checkbox is unchecked, remove the user from the payee array
         setFormData((prevFormData) => ({
           ...prevFormData,
-          [name]: prevFormData[name].filter((userId) => userId !== value),
+          [name]: prevFormData[name].filter(
+            (userId) => userId !== updatedValue
+          ),
         }));
       }
     } else {
       // For other inputs, update the form data normally
       setFormData({
         ...formData,
-        [name]: value,
+        [name]: updatedValue,
       });
     }
   };
@@ -109,7 +114,7 @@ const CreateExpense = () => {
       .post(`http://localhost:5555/groups/expense/${id}`, formData)
       .then((response) => {
         console.log("Response:", response.data);
-        navigate(`/ShareWallet/group/${id}`)
+        navigate(`/ShareWallet/group/${id}`);
       })
       .catch((error) => {
         console.error("Error:", error);

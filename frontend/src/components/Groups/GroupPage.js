@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 const GroupPage = (props) => {
   const { id } = useParams();
   const [group, setGroup] = useState({});
+  const [refresh, setRefresh] = useState(true);
   const [isLoading, setIsLoading] = useState(true); // Start with loading state true
 
   const navigate = useNavigate();
@@ -26,9 +27,12 @@ const GroupPage = (props) => {
       }
     };
     fetchData();
-  }, [id]); // Include id in dependency array
+  }, [id, refresh]); // Include id in dependency array
 
 
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  }
   return (
     <div className="group-page center">
       {isLoading ? (
@@ -52,7 +56,7 @@ const GroupPage = (props) => {
                 return (<div key={user.userID} className="indi-user">{user.username}</div>)
             })} */}
             {group.expenses.map((expense)=>{
-                return (<Expense expense ={expense}/>)
+                return (<Expense expense ={expense} groupID = {id} refresh = {handleRefresh}/>)
             })}
           </div>
         </>

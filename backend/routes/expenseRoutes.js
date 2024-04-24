@@ -88,6 +88,7 @@ router.post("/:id", async (req, res) => {
         });
         break;
       case "unequally":
+        console.log("Yaha Test");
         let tempOweeAmount = 0;
         let tempPayeeAmount = 0;
         req.body.payee.map((indiPayee) => {
@@ -120,7 +121,8 @@ router.post("/:id", async (req, res) => {
         owee = req.body.owee;
         break;
       case "By percentage":
-
+        console.log("Checkpint");
+        console.log(req.body);
         const totalPercentage = req.body.owee.reduce(
           (total, owee) => total + owee.amount,
           0
@@ -152,10 +154,11 @@ router.post("/:id", async (req, res) => {
 
           owee.push({
             userID: oweer.userID,
+            username: oweer.username,
             amount: percentageAmount,
           });
         });
-        
+
         req.body.amount = totalAmount;
         break;
       case "By Shares":
@@ -189,6 +192,7 @@ router.post("/:id", async (req, res) => {
           const shareAmount = (oweer.amount / totalShares) * tempTotalAmount;
           owee.push({
             userID: oweer.userID,
+            username: oweer.username,
             amount: shareAmount,
           });
         });
@@ -224,7 +228,6 @@ router.post("/:id", async (req, res) => {
         owee.forEach((user) => {
           if (payee.userID == user.userID) {
             if (payee.amount > user.amount) {
-
               payee.amount -= user.amount;
               user.amount = 0;
             } else if (payee.amount < user.amount) {
@@ -233,35 +236,36 @@ router.post("/:id", async (req, res) => {
             }
           }
         });
-
       });
 
-      req.body.payee.forEach((payee)=>{
-        owee.forEach((user)=>{
-
-          if (user.amount != 0 ){
-            if (payee.amount > user.amount){
-              group.balances.forEach((balance)=>{
-
-
-                if ((balance.payee == payee.userID) && (balance.owee == user.userID)){
+      req.body.payee.forEach((payee) => {
+        owee.forEach((user) => {
+          if (user.amount != 0) {
+            if (payee.amount > user.amount) {
+              group.balances.forEach((balance) => {
+                if (
+                  balance.payee == payee.userID &&
+                  balance.owee == user.userID
+                ) {
                   balance.balance += user.amount;
-  
                 }
-              })
+              });
               payee.amount -= user.amount;
               user.amount = 0;
-            }else{
-              group.balances.forEach((balance)=>{
-                if ((balance.payee == payee.userID) && (balance.owee == user.userID)){
+            } else {
+              group.balances.forEach((balance) => {
+                if (
+                  balance.payee == payee.userID &&
+                  balance.owee == user.userID
+                ) {
                   balance.balance += payee.amount;
                 }
-              })
+              });
               user.amount -= payee.amount;
               payee.amount = 0;
             }
           }
-        })
+        });
       });
     }
 
@@ -276,8 +280,6 @@ router.post("/:id", async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-
-
 
 // // // Update
 // // router.put("/:id", async (req, res) => {
@@ -303,71 +305,87 @@ router.post("/:id", async (req, res) => {
 // //   }
 // // });
 
-// router.delete("/:groupID/:expenseID", async (req, res) => {
-//   try {
-//     const { groupID, expenseID } = req.params;
-//     const group = await Group.findOne({ groupID: groupID });
+// Update balances after deleting an expense
+router.delete("/:groupID/:expenseID", async (req, res) => {
+  try {
+    const { groupID, expenseID } = req.params;
+    const group = await Group.findOne({ groupID: groupID });
 
-//     if (!group) {
-//       return res.status(404).json({ message: "Group not found" });
-//     }
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
 
-//     const initialExpenseCount = group.expenses.length;
+    // Find the index of the expense in the expenses array
+    const deletedExpenseIndex = group.expenses.findIndex(
+      (expense) => expense.expenseID === parseInt(expenseID)
+    );
 
-//     // Find the expense with the provided expenseID
-//     // const deletedExpenseIndex = group.expenses.findIndex(expense => expense.expenseID === expenseID);
+    if (deletedExpenseIndex === -1) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
 
-//     let deletedExpenseIndex = null;
-//     group.expenses.forEach((expense)=>{
-//       if (expense.expenseID == expenseID){
-//         deletedExpenseIndex = expense
-//       }
-      
-//     })
-//     if (deletedExpenseIndex === -1) {
-//       return res.status(404).json({ message: "Expense not found" });
-//     }
+    // Extract the deleted expense
+    const deletedExpense = group.expenses[deletedExpenseIndex];
 
-//     // Extract the expense to delete and its details
-//     const deletedExpense = group.expenses[deletedExpenseIndex];
-//     console.log(deletedExpense)
+    // Remove the expense from the expenses array
+    group.expenses.splice(deletedExpenseIndex, 1);
 
-//     // Remove the expense from the expenses array
-//     // group.expenses.splice(deletedExpenseIndex, 1);
+    // Update balances after deleting the expense
+    await updateBalances(group, deletedExpense);
 
-//     // // Update balances
-//     // if (payee.length === 1) {
-//     //   const payeeID = payee[0].userID;
-//     //   owee.forEach(owe => {
-//     //     const oweeID = owe.userID;
-//     //     const balanceToUpdate = group.balances.find(balance => balance.payee === payeeID && balance.owee === oweeID);
-//     //     if (balanceToUpdate) {
-//     //       balanceToUpdate.balance -= owe.amount;
-//     //     }
-//     //   });
-//     // } else {
-//     //   payee.forEach(pay => {
-//     //     owee.forEach(owe => {
-//     //       const payeeID = pay.userID;
-//     //       const oweeID = owe.userID;
-//     //       const balanceToUpdate = group.balances.find(balance => balance.payee === payeeID && balance.owee === oweeID);
-//     //       if (balanceToUpdate) {
-//     //         balanceToUpdate.balance -= owe.amount;
-//     //       }
-//     //     });
-//     //   });
-//     // }
+    // Save the updated group
+    await group.save();
 
-//     await group.save();
+    return res.status(200).json({ message: "Expense deleted successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+});
 
-//     return res.status(200).json({ message: "Expense deleted successfully" });
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).send({ message: error.message });
-//   }
-// });
+// Function to update balances after deleting an expense
+const updateBalances = async (group, deletedExpense) => {
+  try {
+    const payees = deletedExpense.payee;
+    const owees = deletedExpense.owee;
 
-
+    // Iterate through each payee
+    for (const payee of payees) {
+      // If there is only one payee, update balances between payee and owees
+      if (payees.length === 1) {
+        const payeeID = payee.userID;
+        for (const owee of owees) {
+          const oweeID = owee.userID;
+          // Find the balance entry for this payee and owee
+          const balanceToUpdate = group.balances.find(
+            (balance) => balance.payee === payeeID && balance.owee === oweeID
+          );
+          if (balanceToUpdate) {
+            // Deduct the owed amount from the balance
+            balanceToUpdate.balance -= owee.amount;
+          }
+        }
+      } else {
+        // If there are multiple payees, adjust balances accordingly
+        for (const owee of owees) {
+          const oweeID = owee.userID;
+          // Find the balance entry for this payee and owee
+          const balanceToUpdate = group.balances.find(
+            (balance) =>
+              balance.payee === payee.userID && balance.owee === oweeID
+          );
+          if (balanceToUpdate) {
+            // Deduct the owed amount from the balance
+            balanceToUpdate.balance -= owee.amount;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error.message);
+    throw new Error("Failed to update balances");
+  }
+};
 
 // //Delete all expenses
 
@@ -376,9 +394,9 @@ router.delete("/:id", async (req, res) => {
     const { id } = req.params;
     const group = await Group.findOne({ groupID: id }); // Search using groupID
     group.expenses = [];
-    group.balances.forEach((balance)=>{
+    group.balances.forEach((balance) => {
       balance.balance = 0;
-    })
+    });
 
     await group.save();
     return res

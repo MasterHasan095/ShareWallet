@@ -39,9 +39,11 @@ const Payee = (props) => {
 
   // Update the amount for a specific user
   const handleAmountChange = (userId, value) => {
+    const amount = parseFloat(value) || 0; // Parse the value to a float, default to 0 if not a valid number
+
     setAmounts((prevAmounts) => ({
       ...prevAmounts,
-      [userId]: value,
+      [userId]: amount,
     }));
 
     // Calculate indiAddAmount after updating amounts
